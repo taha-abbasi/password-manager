@@ -3,6 +3,51 @@ console.log('starting password manager');
 var storage = require('node-persist');
 storage.initSync();
 
+// create
+//      --name
+//      --username
+//      --password
+
+// get
+//      --name
+
+var argv = require('yargs')
+    .command('create', 'Creates an account', function (yargs) {
+        yargs.options({
+            name: {
+                demand: true,
+                alias: 'n',
+                description: 'Enter an account name',
+                type: 'string'
+            },
+            username: {
+                demand: true,
+                alias: 'u',
+                description: 'Your username goes here',
+                type: 'string'
+            },
+            password: {
+                demand: true,
+                alias: 'p',
+                description: 'Your password goes here',
+                type: 'string'
+            }
+        }).help('help');
+    })
+    .command('get', 'Retrieves an account', function (yargs) {
+        yargs.options({
+            name: {
+                demand: true,
+                alias: 'n',
+                description: 'Enter an account name',
+                type: 'string'
+            }
+        }).help('help');
+    })
+    .help('help')
+    .argv;
+var command = argv._[0];
+
 // account.name Facebook
 // account.username User12!
 // account.password Password123!
@@ -34,11 +79,31 @@ function getAccount (accountName) {
 }
 
 
-// createAccount({
-//     name: 'Facebook',
-//     username: 'someemail@gmail.com',
-//     password: 'Password123!'
-// });
+if (command === 'create' &&
+    typeof argv.name != 'undefined' &&
+    typeof argv.username  != 'undefined' &&
+    typeof argv.password  != 'undefined') {
 
-var facebookAccount = getAccount('Facebook');
-console.log(facebookAccount);
+    var createdAccount = createAccount({
+        name: argv.name,
+        username: argv.username,
+        password: argv.password
+    });
+
+    console.log('Account Created!');
+    console.log(createdAccount);
+
+} else if (command === 'get' && typeof argv.name != 'undefined') {
+    var fetchedAccount = getAccount(argv.name);
+
+    if (typeof fetchedAccount === 'undefined') {
+        console.log(('Account not found!'));
+    } else {
+        console.log('Account found!');
+        console.log(
+            'Account Name: ' + fetchedAccount.name + '\n' +
+            'Username: ' + fetchedAccount.username + '\n' +
+            'Password: ' + fetchedAccount.password
+        );
+    }
+}
