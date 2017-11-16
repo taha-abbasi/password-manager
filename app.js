@@ -69,11 +69,13 @@ function getAccount (accountName) {
     var accounts = storage.getItemSync('accounts');
     var matchedAccount;
 
-    accounts.forEach(function (account) {
-        if (account.name === accountName) {
-            matchedAccount = account;
-        }
-    });
+    if (typeof accounts != 'undefined') {
+        accounts.forEach(function (account) {
+            if (account.name === accountName) {
+                matchedAccount = account;
+            }
+        });
+    }
 
     return matchedAccount;
 }
